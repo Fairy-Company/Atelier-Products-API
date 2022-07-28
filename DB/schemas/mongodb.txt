@@ -1,0 +1,41 @@
+  const { Schema } = mongoose;
+
+  const ProductSchema = new Schema({
+    product_id:  {
+      type: Number,
+      required: true
+    },
+    campus: String,
+    name:   String,
+    slogan:   String,
+    description:   String,
+    category:   String,
+    default_price: Number,
+    created_at: Date,
+    updated_at: Date,
+    features: [{ feauture: String, value: String }],
+    related: [{
+      product_id: Number
+    }]
+  });
+
+  const StylesSchema = new Schema({
+    product_id: Number,
+    results: [{
+        style_id: Number,
+        name: String,
+        original_price: Number,
+        sale_price: Number,
+        default: Boolean,
+        photos: [{
+          thumbnail_url: String,
+          url: String
+        }],
+        skus: [{
+          product_id: Number,
+          quantity: Number,
+          size: String
+        }]
+      }
+    ]
+  });
