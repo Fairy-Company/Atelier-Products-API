@@ -1,114 +1,153 @@
--- ---
--- Globals
--- ---
-
--- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
--- SET FOREIGN_KEY_CHECKS=0;
 
 -- ---
 -- Table 'Products'
 --
 -- ---
 
-DROP TABLE IF EXISTS `Products`;
+DROP TABLE IF EXISTS products;
 
-CREATE TABLE `Products` (
-  `product_id` INTEGER NOT NULL AUTO_INCREMENT,
-  `campus` VARCHAR DEFAULT NULL,
-  `name` VARCHAR DEFAULT NULL,
-  `slogan` TEXT DEFAULT NULL,
-  `description` TEXT DEFAULT NULL,
-  `category` VARCHAR DEFAULT NULL,
-  `default_price` VARCHAR DEFAULT NULL,
-  `created_at` TIMESTAMPTZ DEFAULT NULL,
-  `updated_at` TIMESTAMPTZ DEFAULT NULL,
-  PRIMARY KEY (`product_id`)
+CREATE TABLE products (
+  product_id SERIAL NOT NULL,
+  campus VARCHAR(50) DEFAULT NULL,
+  name VARCHAR(50) DEFAULT NULL,
+  slogan VARCHAR(150) DEFAULT NULL,
+  description VARCHAR(500) DEFAULT NULL,
+  category VARCHAR(50) DEFAULT NULL,
+  default_price INTEGER DEFAULT NULL,
+  created_at TIMESTAMPTZ DEFAULT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NULL,
+  PRIMARY KEY (product_id)
 );
+
+COPY products (product_id, name, slogan, description, category, default_price)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/product.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
 
 -- ---
 -- Table 'Features'
 --
 -- ---
 
-DROP TABLE IF EXISTS `Features`;
+DROP TABLE IF EXISTS features;
 
-CREATE TABLE `Features` (
-  `product_id` INTEGER NOT NULL,
-  `feature` VARCHAR DEFAULT NULL,
-  `value` VARCHAR DEFAULT NULL,
-  PRIMARY KEY (`product_id`)
+CREATE TABLE features (
+  feature_id SERIAL NOT NULL,
+  product_id INTEGER NOT NULL,
+  feature VARCHAR DEFAULT NULL,
+  value VARCHAR DEFAULT NULL,
+  PRIMARY KEY (feature_id)
 );
+
+COPY features (feature_id, product_id, feature, value)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/features.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+ALTER TABLE features ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 
 -- ---
 -- Table 'Styles'
 --
 -- ---
 
-DROP TABLE IF EXISTS `Styles`;
+DROP TABLE IF EXISTS styles;
 
-CREATE TABLE `Styles` (
-  `product_id` INTEGER NOT NULL,
-  `style_id` INTEGER NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR DEFAULT NULL,
-  `original_price` MONEY DEFAULT NULL,
-  `sale_price` MONEY DEFAULT NULL,
-  `default?` BOOLEAN DEFAULT NULL,
-  PRIMARY KEY (`style_id`)
+CREATE TABLE styles (
+  style_id SERIAL NOT NULL,
+  product_id INTEGER NOT NULL,
+  name VARCHAR DEFAULT NULL,
+  original_price INTEGER DEFAULT NULL,
+  sale_price INTEGER DEFAULT NULL,
+  default_style BOOLEAN DEFAULT NULL,
+  PRIMARY KEY (style_id)
 );
+
+COPY styles (style_id, product_id, name, sale_price, original_price, default_style)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/styles.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+ALTER TABLE styles ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 
 -- ---
 -- Table 'photos'
 --
 -- ---
 
-DROP TABLE IF EXISTS `photos`;
+DROP TABLE IF EXISTS photos;
 
-CREATE TABLE `photos` (
-  `product_id` INTEGER NOT NULL,
-  `style_id` INTEGER NOT NULL,
-  `thumbnail_url` VARCHAR DEFAULT NULL,
-  `url` VARCHAR NULL DEFAULT NULL,
-  PRIMARY KEY (`style_id`)
+CREATE TABLE photos (
+  photo_id SERIAL NOT NULL,
+  style_id INTEGER NOT NULL,
+  thumbnail_url VARCHAR DEFAULT NULL,
+  url VARCHAR NULL DEFAULT NULL,
+  PRIMARY KEY (photo_id)
 );
+
+COPY photos (photo_id, style_id, url, thumbnail_url)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/photos.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+UPDATE photos
+SET thumbnail_url = null
+WHERE LENGTH(thumbnail_url) > 2048;
+
+ALTER TABLE photos
+  ALTER column url TYPE VARCHAR(2048),
+  ALTER column thumbnail_url TYPE VARCHAR(2048);
+
+ALTER TABLE photos ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
 
 -- ---
 -- Table 'skus'
 --
 -- ---
 
-DROP TABLE IF EXISTS `skus`;
+DROP TABLE IF EXISTS skus;
 
-CREATE TABLE `skus` (
-  `sku_id` INTEGER NOT NULL AUTO_INCREMENT,
-  `style_id` INTEGER NOT NULL,
-  `quantity` INTEGER DEFAULT NULL,
-  `size` VARCHAR DEFAULT NULL,
-  `product_id` INTEGER NOT NULL,
-  PRIMARY KEY (`sku_id`)
+CREATE TABLE skus (
+  sku_id SERIAL NOT NULL,
+  style_id INTEGER NOT NULL,
+  quantity INTEGER DEFAULT NULL,
+  size VARCHAR DEFAULT NULL,
+  PRIMARY KEY (sku_id)
 );
+
+COPY skus (sku_id, style_id, size, quantity)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/skus.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+ALTER TABLE skus ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
 
 -- ---
 -- Table 'Related Product'
 --
 -- ---
 
-DROP TABLE IF EXISTS `Related Product`;
+DROP TABLE IF EXISTS related;
 
-CREATE TABLE `Related Product` (
-  `product_id` INTEGER NOT NULL,
-  `related_product_id` INTEGER DEFAULT NULL,
-  PRIMARY KEY (`product_id`)
+CREATE TABLE related (
+  related_id SERIAL NOT NULL,
+  product_id INTEGER NOT NULL,
+  related_product_id INTEGER DEFAULT NULL,
+  PRIMARY KEY (related_id)
 );
 
--- ---
--- Foreign Keys
--- ---
+COPY related (related_id, product_id, related_product_id)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/related.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
 
-ALTER TABLE `Products` ADD FOREIGN KEY (product_id) REFERENCES `Features` (`product_id`);
-ALTER TABLE `Products` ADD FOREIGN KEY (product_id) REFERENCES `Styles` (`product_id`);
-ALTER TABLE `Related Product` ADD FOREIGN KEY (product_id) REFERENCES `Products` (`product_id`);
-ALTER TABLE `photos` ADD FOREIGN KEY (style_id) REFERENCES `Styles` (`style_id`);
-ALTER TABLE `skus` ADD FOREIGN KEY (style_id) REFERENCES `Styles` (`style_id`);
+ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 
 -- ---
 -- Table Properties
