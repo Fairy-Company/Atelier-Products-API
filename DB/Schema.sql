@@ -89,7 +89,7 @@ CREATE TABLE photos (
 );
 
 COPY photos (photo_id, style_id, url, thumbnail_url)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/photos.csv'
+FROM '/Users/ibraheemazam/Downloads/SDCdata/photoscopy.csv'
 WITH DELIMITER ','
 CSV HEADER
 NULL 'null';
@@ -98,9 +98,9 @@ UPDATE photos
 SET thumbnail_url = null
 WHERE LENGTH(thumbnail_url) > 2048;
 
-ALTER TABLE photos
-  ALTER column url TYPE VARCHAR(2048),
-  ALTER column thumbnail_url TYPE VARCHAR(2048);
+ALTER TABLE photoscopy
+  ALTER column url TYPE VARCHAR(250),
+  ALTER column thumbnail_url TYPE VARCHAR(250);
 
 ALTER TABLE photos ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
 
@@ -176,3 +176,14 @@ ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id
 -- ('','','','');
 -- INSERT INTO `skus` (`style_id`,`sku_id`,`quantity`,`size`,`product_id`) VALUES
 -- ('','','','','');
+
+-- select photo_id from photos where length(thumbnail_url) > 2048;
+-- select photo_id from photoscopy where length(thumbnail_url) > 2048;
+
+--       48
+--       263
+--       282
+--       304
+--       326
+
+-- select thumbnail_url from photos where photo_id = 48;
