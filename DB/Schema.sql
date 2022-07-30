@@ -8,14 +8,14 @@ DROP TABLE IF EXISTS products;
 
 CREATE TABLE products (
   product_id SERIAL NOT NULL,
-  campus VARCHAR(50) DEFAULT NULL,
+  campus VARCHAR(50) DEFAULT 'hr-rfp',
   name VARCHAR(50) DEFAULT NULL,
   slogan VARCHAR(150) DEFAULT NULL,
   description VARCHAR(500) DEFAULT NULL,
   category VARCHAR(50) DEFAULT NULL,
   default_price INTEGER DEFAULT NULL,
-  created_at TIMESTAMPTZ DEFAULT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (product_id)
 );
 
@@ -187,3 +187,9 @@ ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id
 --       326
 
 -- select thumbnail_url from photos where photo_id = 48;
+
+-- ALTER TABLE products
+--   ALTER column default_price TYPE money;
+
+-- UPDATE products
+-- SET default_price = (default_price::numeric);
