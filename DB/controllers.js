@@ -49,14 +49,30 @@ const getProduct = (productID) => {
   )
 }
 
+const getRelated = (productID) => {
+  const queryString = `
+    SELECT ARRAY_AGG(related_id)
+    FROM related
+    WHERE product_id = ${productID}
+    GROUP BY product_id;
+  `;
+  return (
+    pool
+    .query(queryString)
+    .catch((err) => console.log('ERROR in getProducts() query string\n', err))
+  )
+}
+
 // pool
 //   .query(`
-//     SELECT feature, value
-//     FROM features
-//     limit 1;
+//     SELECT ARRAY_AGG(related_id)
+//     FROM related
+//     WHERE product_id = 1
+//     GROUP BY product_id;
 //   `)
-//   .then((res) => console.log(res.rows))
+//   .then((res) => console.log(res.rows[0]['array_agg']))
 //   .catch((err) => console.log(err));
 
 module.exports.getProducts = getProducts;
 module.exports.getProduct = getProduct;
+module.exports.getRelated = getRelated;

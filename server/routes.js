@@ -27,7 +27,9 @@ router.get('/products/:product_id/styles', (req, res) => {
 
 router.get('/products/:product_id/related', (req, res) => {
   //console.log(req.params.product_id)
-  res.send('related route')
+  controllers.getRelated(req.params.product_id)
+    .then((result) => res.send(result.rows[0]['array_agg']))
+    .catch((err) => console.log(err))
 })
 
 module.exports = router;
