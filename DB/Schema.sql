@@ -13,7 +13,7 @@ CREATE TABLE products (
   slogan VARCHAR(150) DEFAULT NULL,
   description VARCHAR(500) DEFAULT NULL,
   category VARCHAR(50) DEFAULT NULL,
-  default_price INTEGER DEFAULT NULL,
+  default_price MONEY DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (product_id)
@@ -57,8 +57,8 @@ CREATE TABLE styles (
   style_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
   name VARCHAR DEFAULT NULL,
-  original_price INTEGER DEFAULT NULL,
-  sale_price INTEGER DEFAULT NULL,
+  original_price MONEY DEFAULT NULL,
+  sale_price MONEY DEFAULT NULL,
   default_style BOOLEAN DEFAULT NULL,
   PRIMARY KEY (style_id)
 );
@@ -156,8 +156,12 @@ NULL 'null';
 
 -- select thumbnail_url from photos where photo_id = 48;
 
--- ALTER TABLE products
---   ALTER column default_price TYPE money;
+ALTER TABLE products
+  ALTER column default_price TYPE money;
+
+ALTER TABLE styles
+  ALTER column original_price TYPE money,
+  ALTER column sale_price TYPE money;
 
 -- UPDATE products
 -- SET default_price = (default_price::numeric);

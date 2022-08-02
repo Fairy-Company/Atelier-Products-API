@@ -59,20 +59,95 @@ const getRelated = (productID) => {
   return (
     pool
     .query(queryString)
-    .catch((err) => console.log('ERROR in getProducts() query string\n', err))
+    .catch((err) => console.log('ERROR in getRelated() query string\n', err))
+  )
+}
+
+const getStyles = (productID) => {
+  queryString = `
+    SELECT row_to_json(s1)
+    FROM (
+      SELECT product_id,
+      (
+        SELECT array_to_json(array_agg(row_to_json(s2)))
+        FROM (
+          SELECT styles.style_id, array_to_json(array_agg(
+            json_build_object(
+              'thumbnail_url', photos.thumbnail_url,
+              'url', photos.url
+              )
+            )) photos
+          FROM styles
+          JOIN photos ON styles.style_id = photos.style_id
+          WHERE styles.product_id = ${productID}
+          GROUP BY styles.style_id
+        ) s2
+      ) results
+      FROM styles
+      WHERE product_id = ${productID}
+      GROUP BY product_id
+    ) as s1
+  `;
+  return (
+    pool
+      .query(queryString)
+      .catch((err) => console.log('ERROR in getStyles() query string\n', err))
   )
 }
 
 // pool
 //   .query(`
-//     SELECT ARRAY_AGG(related_id)
-//     FROM related
-//     WHERE product_id = 1
-//     GROUP BY product_id;
+//     SELECT array_agg(
+//       json_build_object(
+//         'thumbnail_url', thumbnail_url,
+//         'url', url
+//       )
+//     )
+//     FROM photos
+//     GROUP BY style_id
+//     limit 1;
 //   `)
-//   .then((res) => console.log(res.rows[0]['array_agg']))
+//   .then((res) => console.log(res.rows))
 //   .catch((err) => console.log(err));
 
 module.exports.getProducts = getProducts;
 module.exports.getProduct = getProduct;
 module.exports.getRelated = getRelated;
+module.exports.getStyles = getStyles;
+
+
+
+// skus
+  // SELECT
+  // json_build_object( 'skus', json_object_agg(sku_id, json_build_object(
+  //     'quantity', quantity,
+  //     'size', size
+  // )))
+  // FROM skus
+  // WHERE style_id = 2
+  // GROUP BY style_id;
+
+
+  // working without skus
+  // SELECT row_to_json(s1)
+  // FROM (
+  //   SELECT product_id,
+  //   (
+  //     SELECT array_to_json(array_agg(row_to_json(s2)))
+  //     FROM (
+  //       SELECT styles.style_id, array_to_json(array_agg(
+  //         json_build_object(
+  //           'thumbnail_url', photos.thumbnail_url,
+  //           'url', photos.url
+  //           )
+  //         )) photos
+  //       FROM styles
+  //       JOIN photos ON styles.style_id = photos.style_id
+  //       WHERE styles.product_id = ${productID}
+  //       GROUP BY styles.style_id
+  //     ) s2
+  //   ) results
+  //   FROM styles
+  //   WHERE product_id = ${productID}
+  //   GROUP BY product_id
+  // ) as s1

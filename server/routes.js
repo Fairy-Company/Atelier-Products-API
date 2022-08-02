@@ -5,7 +5,10 @@ const controllers = require('../DB/controllers.js');
 router.get('/products', (req, res) => {
   controllers.getProducts(req.query.page, req.query.count)
   .then((result) => res.send(result.rows))
-  .catch((err) => console.log('Error sending products,:\n', err));
+  .catch((err) => {
+    console.log('Error sending products,:\n', err);
+    res.sendStatus(501);
+  });
 })
 
 router.get('/products/:product_id', (req, res) => {
@@ -17,19 +20,30 @@ router.get('/products/:product_id', (req, res) => {
         res.send(result.rows)
       }
     })
-    .catch((err) => console.log('Error sending product,:\n', err));
-})
+    .catch((err) => {
+      console.log('Error sending product,:\n', err);
+      res.sendStatus(501);
+    });
+});
 
 router.get('/products/:product_id/styles', (req, res) => {
-  //console.log(req.params.product_id)
-  res.send('styles route')
-})
+  controllers.getStyles(req.params.product_id)
+    .then((result) => {
+      res.send(result.rows[0]['row_to_json'])
+    })
+    .catch((err) => {
+      console.log('error in get styles route:\n', err);
+      res.sendStatus(501);
+    });
+});
 
 router.get('/products/:product_id/related', (req, res) => {
-  //console.log(req.params.product_id)
   controllers.getRelated(req.params.product_id)
     .then((result) => res.send(result.rows[0]['array_agg']))
-    .catch((err) => console.log(err))
-})
+    .catch((err) => {
+      console.log('Error in get related products route:\n', err);
+      res.sendStatus(501);
+    });
+});
 
 module.exports = router;
