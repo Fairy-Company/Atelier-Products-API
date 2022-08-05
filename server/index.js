@@ -9,7 +9,6 @@ console.log(process.env.PORT);
 
 app.use(express.json());
 
-
 app.use((req, res, next) => {
   if (!req.headers.authorization) {
     return res.sendStatus(401);
