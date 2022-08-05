@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./server/index.js",
+    "server-prod": "node ./server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,8 +19,6 @@
   },
   "homepage": "https://github.com/Fairy-Company/Atelier-Products-API#readme",
   "dependencies": {
-    "csv-parser": "^3.0.0",
-    "csv-stream": "^0.2.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "pg": "^8.7.3"
