@@ -139,11 +139,11 @@ NULL 'null';
 -- Foreign keys
 -- ---
 
--- ALTER TABLE features ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
--- ALTER TABLE styles ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
--- ALTER TABLE photos ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
--- ALTER TABLE skus ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
--- ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
+ALTER TABLE features ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
+ALTER TABLE styles ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
+ALTER TABLE photos ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
+ALTER TABLE skus ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
+ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 
 -- select photo_id from photos where length(thumbnail_url) > 2048;
 -- select photo_id from photoscopy where length(thumbnail_url) > 2048;
@@ -155,13 +155,6 @@ NULL 'null';
 --       326
 
 -- select thumbnail_url from photos where photo_id = 48;
-
-ALTER TABLE products
-  ALTER column default_price TYPE money;
-
-ALTER TABLE styles
-  ALTER column original_price TYPE money,
-  ALTER column sale_price TYPE money;
 
 -- UPDATE products
 -- SET default_price = (default_price::numeric);
