@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const controllers = require('../DB/controllers.js');
+const controllers = require('../DB/controllers/controllers.js');
 
 router.get('/products', (req, res) => {
   controllers.getProducts(req.query.page, req.query.count)
