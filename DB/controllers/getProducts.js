@@ -5,9 +5,8 @@ const getProducts = (page=1, count=5) => {
     SELECT product_id AS id, campus, name, slogan, description,
     category, default_price::numeric, created_at, updated_at
     FROM products
-    WHERE product_id > $2 * ($1 - 1)
     ORDER BY product_id
-    LIMIT $2;
+    LIMIT $2 OFFSET $2 * ($1 - 1);
   `;
   const values = [page, count]
   return (
