@@ -1,11 +1,7 @@
 
--- ---
--- Table 'Products'
---
--- ---
+-- CREATE TABLES
 
 DROP TABLE IF EXISTS products;
-
 CREATE TABLE products (
   product_id INTEGER NOT NULL,
   campus VARCHAR(50) DEFAULT 'hr-rfp',
@@ -19,19 +15,7 @@ CREATE TABLE products (
   PRIMARY KEY (product_id)
 );
 
-COPY products (product_id, name, slogan, description, category, default_price)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/product.csv'
-WITH DELIMITER ','
-CSV HEADER
-NULL 'null';
-
--- ---
--- Table 'Features'
---
--- ---
-
 DROP TABLE IF EXISTS features;
-
 CREATE TABLE features (
   feature_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
@@ -40,19 +24,7 @@ CREATE TABLE features (
   PRIMARY KEY (feature_id)
 );
 
-COPY features (feature_id, product_id, feature, value)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/features.csv'
-WITH DELIMITER ','
-CSV HEADER
-NULL 'null';
-
--- ---
--- Table 'Styles'
---
--- ---
-
 DROP TABLE IF EXISTS styles;
-
 CREATE TABLE styles (
   style_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
@@ -63,19 +35,7 @@ CREATE TABLE styles (
   PRIMARY KEY (style_id)
 );
 
-COPY styles (style_id, product_id, name, sale_price, original_price, default_style)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/styles.csv'
-WITH DELIMITER ','
-CSV HEADER
-NULL 'null';
-
--- ---
--- Table 'photos'
---
--- ---
-
 DROP TABLE IF EXISTS photos;
-
 CREATE TABLE photos (
   photo_id INTEGER NOT NULL,
   style_id INTEGER NOT NULL,
@@ -84,23 +44,7 @@ CREATE TABLE photos (
   PRIMARY KEY (photo_id)
 );
 
-COPY photos (photo_id, style_id, url, thumbnail_url)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/photoscopy.csv'
-WITH DELIMITER ','
-CSV HEADER
-NULL 'null';
-
--- ALTER TABLE photoscopy
---   ALTER column url TYPE VARCHAR(250),
---   ALTER column thumbnail_url TYPE VARCHAR(250);
-
--- ---
--- Table 'skus'
---
--- ---
-
 DROP TABLE IF EXISTS skus;
-
 CREATE TABLE skus (
   sku_id INTEGER NOT NULL,
   style_id INTEGER NOT NULL,
@@ -109,19 +53,7 @@ CREATE TABLE skus (
   PRIMARY KEY (sku_id)
 );
 
-COPY skus (sku_id, style_id, size, quantity)
-FROM '/Users/ibraheemazam/Downloads/SDCdata/skus.csv'
-WITH DELIMITER ','
-CSV HEADER
-NULL 'null';
-
--- ---
--- Table 'Related Product'
---
--- ---
-
 DROP TABLE IF EXISTS related;
-
 CREATE TABLE related (
   related_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
@@ -129,15 +61,47 @@ CREATE TABLE related (
   PRIMARY KEY (related_id)
 );
 
+
+-- load data into tables
+
+COPY products (product_id, name, slogan, description, category, default_price)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/product.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+COPY features (feature_id, product_id, feature, value)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/features.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+COPY styles (style_id, product_id, name, sale_price, original_price, default_style)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/styles.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+COPY photos (photo_id, style_id, url, thumbnail_url)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/photoscopy.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
+COPY skus (sku_id, style_id, size, quantity)
+FROM '/Users/ibraheemazam/Downloads/SDCdata/skus.csv'
+WITH DELIMITER ','
+CSV HEADER
+NULL 'null';
+
 COPY related (related_id, product_id, related_product_id)
 FROM '/Users/ibraheemazam/Downloads/SDCdata/related.csv'
 WITH DELIMITER ','
 CSV HEADER
 NULL 'null';
 
--- ---
--- Foreign keys
--- ---
+
+-- Add Foreign keys
 
 ALTER TABLE features ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 ALTER TABLE styles ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
@@ -145,6 +109,13 @@ ALTER TABLE photos ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
 ALTER TABLE skus ADD FOREIGN KEY (style_id) REFERENCES styles (style_id);
 ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id);
 
+
+-- add indexes
+
+CREATE INDEX ind_prod_id ON products (product_id);
+
+
+-- random queries
 -- select photo_id from photos where length(thumbnail_url) > 2048;
 -- select photo_id from photoscopy where length(thumbnail_url) > 2048;
 
@@ -164,3 +135,7 @@ ALTER TABLE related ADD FOREIGN KEY (product_id) REFERENCES products (product_id
 --     JOIN features f
 --     ON p.product_id = f.product_id
 --     LIMIT 3;
+
+-- ALTER TABLE photoscopy
+--   ALTER column url TYPE VARCHAR(250),
+--   ALTER column thumbnail_url TYPE VARCHAR(250);
